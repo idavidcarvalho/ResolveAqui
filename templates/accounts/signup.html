@@ -1,0 +1,50 @@
+{% extends 'core/base.html' %}
+{% block title %}Cadastre-se — ResolveAqui{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+  <div class="card shadow-sm" style="max-width: 400px; width: 100%;">
+    <div class="card-body p-4">
+      <h1 class="h4 card-title mb-3">Criar conta</h1>
+      <p class="card-text text-muted small mb-4">Cadastre-se para poder abrir chamados. Lembre-se: fotos são obrigatórias ao registrar um chamado.</p>
+      
+      <form method="POST" novalidate>
+        {% csrf_token %}
+        
+        <div class="mb-3">
+          <label for="id_username" class="form-label">Usuário</label>
+          <input type="text" class="form-control" id="id_username" name="username" required>
+        </div>
+        
+        <div class="mb-3">
+          <label for="id_password1" class="form-label">Senha</label>
+          <input type="password" class="form-control" id="id_password1" name="password1" required>
+          <small class="form-text text-muted d-block mt-2">
+            A senha deve ter pelo menos 8 caracteres e não pode ser muito comum.
+          </small>
+        </div>
+        
+        <div class="mb-3">
+          <label for="id_password2" class="form-label">Confirmar senha</label>
+          <input type="password" class="form-control" id="id_password2" name="password2" required>
+        </div>
+        
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {% for error in form.non_field_errors %}
+              {{ error }}
+            {% endfor %}
+          </div>
+        {% endif %}
+        
+        <button type="submit" class="btn btn-primary w-100 mb-3">Cadastrar</button>
+        
+        <p class="text-center small">
+          Já tem conta? <a href="{% url 'accounts:login' %}" class="text-primary">Faça login</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
