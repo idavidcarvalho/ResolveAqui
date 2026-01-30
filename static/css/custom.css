@@ -1,0 +1,24 @@
+:root{
+  --primary:#5b46f0; /* close to indigo used */
+  --muted:#6b7280;
+  --bg:#f8fafc;
+}
+
+body{
+  background-color:var(--bg);
+  color:#111827;
+}
+
+.btn-primary{
+  background-color:var(--primary);
+  border-color:var(--primary);
+}
+
+.btn-primary:hover{
+  background-color:#4736d6;
+  border-color:#4736d6;
+}
+
+@media (max-width:576px){
+  .display-5{font-size:1.5rem}
+}
