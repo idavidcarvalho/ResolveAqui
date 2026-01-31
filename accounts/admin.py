@@ -42,7 +42,6 @@ class UserAdmin(DjangoUserAdmin):
 	profile_image_tag.short_description = 'Foto'
 
 	def get_readonly_fields(self, request, obj=None):
-		# Only superusers can edit `typeUser`; others see it as read-only
 		ro = list(super().get_readonly_fields(request, obj))
 		if not request.user.is_superuser:
 			ro.append('typeUser')

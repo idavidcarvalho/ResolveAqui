@@ -63,7 +63,6 @@ class ProfileForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # make fields optional to allow partial updates while keeping required at model level
         for f in self.fields.values():
             f.widget.attrs.update({'class': 'form-control form-control-lg'})
 

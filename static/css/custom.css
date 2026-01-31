@@ -1,5 +1,5 @@
 :root{
-  --primary:#5b46f0; /* close to indigo used */
+  --primary:#5b46f0;
   --muted:#6b7280;
   --bg:#f8fafc;
 }
@@ -29,7 +29,6 @@ body{
   .display-5{font-size:1.5rem}
 }
 
-/* Larger, more interactive form controls */
 .form-control-lg, .form-select-lg {
   padding: 0.9rem 1rem;
   font-size: 1.05rem;
@@ -38,40 +37,28 @@ body{
   border: 1px solid rgba(17,24,39,0.12);
 }
 
-/* Dark mode input backgrounds */
-
-/* Required field marker */
 .form-label.required::after{
   content: " *";
   color: #dc3545;
   margin-left: 0.15rem;
 }
 
-/* Removed icon-specific helpers (icons removed) */
 .input-group .form-control, .input-group .form-select{border-left:0}
 
-.card{
-/* Make card less like default bootstrap */
 .card{
   border-radius: 1rem;
   border: 1px solid rgba(17,24,39,0.06);
   box-shadow: 0 10px 30px rgba(15,23,42,0.04);
 }
 
-/* Dark mode cards and navbar */
-/* Smooth transition */
 html, body, .card, .form-control, .btn { transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease }
 
-/* Inputs focus */
 .form-control:focus, .form-select:focus{box-shadow:0 6px 24px rgba(91,70,240,0.08);border-color:var(--primary)}
 
-/* Consistent card form spacing */
 .card .form-text.small {opacity: .9}
 
-/* Highlight invalid fields */
 .is-invalid {box-shadow: 0 0 0 .125rem rgba(220,53,69,.12); border-color:#dc3545}
 
-/* Navbar avatar adjustments */
 .navbar .dropdown-toggle img.rounded-circle { border: 2px solid rgba(17,24,39,0.06); }
 .navbar .dropdown-toggle div.rounded-circle { font-size:0.95rem; }
 .navbar .dropdown-toggle { color: #111827; }
