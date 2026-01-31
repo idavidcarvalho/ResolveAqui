@@ -113,3 +113,10 @@ STATICFILES_DIRS = [
 
 # Optional: where `collectstatic` will collect files for production
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Custom user model
+AUTH_USER_MODEL = 'accounts.User'
+
+# Media files (perfil de usuário)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
