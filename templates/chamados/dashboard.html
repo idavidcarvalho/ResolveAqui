@@ -1,0 +1,412 @@
+{% extends 'core/base.html' %}
+{% block title %}Dashboard — ResolveAqui{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-3 px-md-4" style="min-height:60vh;">
+  <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4 flex-wrap gap-2">
+    <div class="d-flex align-items-center">
+      <a href="{% url 'tickets:all_tickets' %}" class="btn btn-sm btn-outline-secondary me-2 me-md-3">
+        <i class="bi bi-arrow-left"></i>
+      </a>
+      <h2 class="h6 h5-md mb-0"><i class="bi bi-speedometer2 me-2 d-none d-sm-inline"></i>Dashboard</h2>
+    </div>
+    <button class="btn btn-primary btn-sm" onclick="location.reload()">
+      <i class="bi bi-arrow-clockwise me-1 me-md-2"></i><span class="d-none d-md-inline">Atualizar Dados</span><span class="d-md-none">Atualizar</span>
+    </button>
+  </div>
+
+  <!-- Cards de Estatísticas -->
+  <div class="row g-2 g-md-3 mb-3 mb-md-4">
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100">
+        <div class="card-body p-3">
+          <i class="bi bi-clipboard-check text-primary" style="font-size:2rem;"></i>
+          <h3 class="mt-2 mb-0 fs-4">{{ total_tickets }}</h3>
+          <p class="text-muted small mb-0">Total</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100 border-primary">
+        <div class="card-body p-3">
+          <i class="bi bi-circle-fill text-primary" style="font-size:2rem;"></i>
+          <h3 class="mt-2 mb-0 fs-4">{{ tickets_abertos }}</h3>
+          <p class="text-muted small mb-0">Abertos</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100 border-warning">
+        <div class="card-body p-3">
+          <i class="bi bi-hourglass-split text-warning" style="font-size:2rem;"></i>
+          <h3 class="mt-2 mb-0 fs-4">{{ tickets_em_andamento }}</h3>
+          <p class="text-muted small mb-0">Em Andamento</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 col-md-3">
+      <div class="card text-center h-100 border-success">
+        <div class="card-body p-3">
+          <i class="bi bi-check-circle-fill text-success" style="font-size:2rem;"></i>
+          <h3 class="mt-2 mb-0 fs-4">{{ tickets_finalizados }}</h3>
+          <p class="text-muted small mb-0">Finalizados</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráficos -->
+  <div class="row g-2 g-md-3 mb-3 mb-md-4">
+    <!-- Gráfico de Pizza - Status -->
+    <div class="col-12 col-md-6">
+      <div class="card">
+        <div class="card-body p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0 small"><i class="bi bi-pie-chart me-1 me-md-2"></i><span class="d-none d-sm-inline">Chamados por </span>Status</h6>
+            <button class="btn btn-sm btn-outline-secondary" onclick="downloadChart('statusChart')">
+              <i class="bi bi-download"></i><span class="d-none d-md-inline ms-1">PNG</span>
+            </button>
+          </div>
+          <div style="position: relative; height: 250px;">
+            <canvas id="statusChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráfico de Barras - Problemas Mais Recorrentes -->
+    <div class="col-12 col-md-6">
+      <div class="card">
+        <div class="card-body p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0 small"><i class="bi bi-bar-chart me-1 me-md-2"></i>Top 10 Problemas</h6>
+            <button class="btn btn-sm btn-outline-secondary" onclick="downloadChart('problemsChart')">
+              <i class="bi bi-download"></i><span class="d-none d-md-inline ms-1">PNG</span>
+            </button>
+          </div>
+          <div style="position: relative; height: 250px;">
+            <canvas id="problemsChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-2 g-md-3 mb-3 mb-md-4">
+    <!-- Gráfico de Barras Horizontal - Áreas -->
+    <div class="col-12 col-md-6">
+      <div class="card">
+        <div class="card-body p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0 small"><i class="bi bi-tags me-1 me-md-2"></i><span class="d-none d-sm-inline">Chamados por </span>Área</h6>
+            <button class="btn btn-sm btn-outline-secondary" onclick="downloadChart('areasChart')">
+              <i class="bi bi-download"></i><span class="d-none d-md-inline ms-1">PNG</span>
+            </button>
+          </div>
+          <div style="position: relative; height: 250px;">
+            <canvas id="areasChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gráfico de Doughnut - Distritos -->
+    <div class="col-12 col-md-6">
+      <div class="card">
+        <div class="card-body p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0 small"><i class="bi bi-geo-alt me-1 me-md-2"></i><span class="d-none d-sm-inline">Chamados por </span>Distrito</h6>
+            <button class="btn btn-sm btn-outline-secondary" onclick="downloadChart('districtChart')">
+              <i class="bi bi-download"></i><span class="d-none d-md-inline ms-1">PNG</span>
+            </button>
+          </div>
+          <div style="position: relative; height: 250px;">
+            <canvas id="districtChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico de Linha - Timeline -->
+  <div class="row g-2 g-md-3 mb-3 mb-md-4">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body p-3">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0 small"><i class="bi bi-graph-up me-1 me-md-2"></i>Timeline <span class="d-none d-sm-inline">de Chamados (Últimos 12 Meses)</span></h6>
+            <button class="btn btn-sm btn-outline-secondary" onclick="downloadChart('timelineChart')">
+              <i class="bi bi-download"></i><span class="d-none d-md-inline ms-1">PNG</span>
+            </button>
+          </div>
+          <div style="position: relative; height: 200px;">
+            <canvas id="timelineChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* Responsividade para Dashboard */
+@media (max-width: 576px) {
+  .card-body h3 {
+    font-size: 1.5rem;
+  }
+  .card-body i {
+    font-size: 1.8rem !important;
+  }
+}
+
+/* Prevenir scroll infinito nos gráficos */
+canvas {
+  max-width: 100%;
+  display: block;
+}
+</style>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<script>
+// Paleta de cores moderna
+const colors = {
+  primary: '#5b46f0',
+  success: '#28a745',
+  warning: '#ffc107',
+  danger: '#dc3545',
+  info: '#17a2b8',
+  purple: '#6f42c1',
+  orange: '#fd7e14',
+  teal: '#20c997',
+  pink: '#e83e8c',
+  indigo: '#6610f2',
+};
+
+const chartColors = [
+  colors.primary,
+  colors.success,
+  colors.warning,
+  colors.danger,
+  colors.info,
+  colors.purple,
+  colors.orange,
+  colors.teal,
+  colors.pink,
+  colors.indigo,
+];
+
+// Configuração padrão dos gráficos
+Chart.defaults.font.family = 'Inter, system-ui, -apple-system, sans-serif';
+Chart.defaults.color = '#6b7280';
+
+// Gráfico de Status (Pizza)
+const statusCtx = document.getElementById('statusChart').getContext('2d');
+const statusChart = new Chart(statusCtx, {
+  type: 'pie',
+  data: {
+    labels: ['Abertos', 'Em Andamento', 'Finalizados'],
+    datasets: [{
+      data: [{{ tickets_abertos }}, {{ tickets_em_andamento }}, {{ tickets_finalizados }}],
+      backgroundColor: [colors.primary, colors.warning, colors.success],
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'bottom',
+      },
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            const label = context.label || '';
+            const value = context.parsed || 0;
+            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+            const percentage = ((value / total) * 100).toFixed(1);
+            return `${label}: ${value} (${percentage}%)`;
+          }
+        }
+      }
+    }
+  }
+});
+
+// Gráfico de Problemas (Barras)
+const problemsCtx = document.getElementById('problemsChart').getContext('2d');
+const problemsChart = new Chart(problemsCtx, {
+  type: 'bar',
+  data: {
+    labels: [
+      {% for problem in top_problems %}
+        '{{ problem.name|truncatechars:30|escapejs }}'{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ],
+    datasets: [{
+      label: 'Quantidade',
+      data: [
+        {% for problem in top_problems %}
+          {{ problem.total }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ],
+      backgroundColor: chartColors[0],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          precision: 0
+        }
+      }
+    }
+  }
+});
+
+// Gráfico de Áreas (Barras Horizontais)
+const areasCtx = document.getElementById('areasChart').getContext('2d');
+const areasChart = new Chart(areasCtx, {
+  type: 'bar',
+  data: {
+    labels: [
+      {% for area in tickets_por_area %}
+        '{{ area.name|escapejs }}'{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ],
+    datasets: [{
+      label: 'Quantidade',
+      data: [
+        {% for area in tickets_por_area %}
+          {{ area.total }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ],
+      backgroundColor: chartColors[1],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      }
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        ticks: {
+          precision: 0
+        }
+      }
+    }
+  }
+});
+
+// Gráfico de Distritos (Doughnut)
+const districtCtx = document.getElementById('districtChart').getContext('2d');
+const districtChart = new Chart(districtCtx, {
+  type: 'doughnut',
+  data: {
+    labels: [
+      {% for item in tickets_por_distrito %}
+        '{{ item.district|escapejs }}'{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ],
+    datasets: [{
+      data: [
+        {% for item in tickets_por_distrito %}
+          {{ item.total }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ],
+      backgroundColor: chartColors,
+      borderWidth: 2,
+      borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+      }
+    }
+  }
+});
+
+// Gráfico de Timeline (Linha)
+const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+const timelineChart = new Chart(timelineCtx, {
+  type: 'line',
+  data: {
+    labels: [
+      {% for item in tickets_timeline %}
+        '{{ item.month|date:"M/Y" }}'{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ],
+    datasets: [{
+      label: 'Chamados Criados',
+      data: [
+        {% for item in tickets_timeline %}
+          {{ item.total }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ],
+      borderColor: colors.primary,
+      backgroundColor: 'rgba(91, 70, 240, 0.1)',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 5,
+      pointBackgroundColor: colors.primary,
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2,
+      pointHoverRadius: 7,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: false
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          precision: 0
+        }
+      }
+    }
+  }
+});
+
+// Função para download de gráfico como PNG
+function downloadChart(chartId) {
+  const chart = Chart.getChart(chartId);
+  const url = chart.toBase64Image();
+  const link = document.createElement('a');
+  link.download = `${chartId}_${new Date().toISOString().split('T')[0]}.png`;
+  link.href = url;
+  link.click();
+}
+</script>
+{% endblock %}

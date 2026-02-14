@@ -8,6 +8,26 @@
     <h1 class="display-5 fw-bold mb-3">Resolva mais. Colabore melhor.</h1>
     <p class="lead text-muted mb-4">ResolveAqui é o sistema de chamados da cidade moradores reportam problemas da comunidade para os gestores municipais. Somente gestores têm acesso completo aos chamados; moradores veem e acompanham apenas os seus.</p>
 
+    {% if user.is_authenticated %}
+      {% if user.typeUser == 'Gestor' %}
+        <div class="d-flex gap-3 justify-content-center">
+          <a href="{% url 'tickets:dashboard' %}" class="btn btn-primary btn-lg"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+          <a href="{% url 'tickets:all_tickets' %}" class="btn btn-outline-primary btn-lg"><i class="bi bi-list-check me-2"></i>Gerenciar Chamados</a>
+        </div>
+      {% else %}
+        <div class="d-flex gap-3 justify-content-center">
+          <a href="{% url 'tickets:my_tickets' %}" class="btn btn-primary btn-lg"><i class="bi bi-ticket-perforated me-2"></i>Meus Chamados</a>
+          <a href="{% url 'tickets:create' %}" class="btn btn-outline-primary btn-lg"><i class="bi bi-plus-circle me-2"></i>Abrir Chamado</a>
+        </div>
+      {% endif %}
+    {% else %}
+      <div class="d-flex gap-3 justify-content-center">
+        <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-lg"><i class="bi bi-person-plus me-2"></i>Cadastre-se</a>
+        <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary btn-lg"><i class="bi bi-box-arrow-in-right me-2"></i>Entrar</a>
+      </div>
+    {% endif %}
+  </header>
+
   <!-- Features Section -->
   <section class="mb-5">
     <div class="row g-4">
