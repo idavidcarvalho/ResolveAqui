@@ -63,3 +63,9 @@ html, body, .card, .form-control, .btn { transition: background-color .18s ease,
 .navbar .dropdown-toggle div.rounded-circle { font-size:0.95rem; }
 .navbar .dropdown-toggle { color: #111827; }
 .navbar .dropdown-menu { min-width: 12rem; }
+
+/* File card for image/video inputs */
+.file-card { background: #fff; }
+.file-card input[type=file] { display: none; }
+.file-card button { min-width: 160px; }
+.file-card img { border-radius: .5rem; }
