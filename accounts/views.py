@@ -14,6 +14,9 @@ def login_view(request):
 		if form.is_valid():
 			user = form.cleaned_data.get('user')
 			login(request, user)
+			# redirect 'Comum' users to their tickets list
+			if getattr(user, 'typeUser', None) == 'Comum':
+				return redirect('tickets:my_tickets')
 			return redirect('core:home')
 	else:
 		form = LoginForm()
