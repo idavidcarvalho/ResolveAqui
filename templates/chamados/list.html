@@ -1,0 +1,46 @@
+{% extends 'core/base.html' %}
+{% block title %}Meus Chamados — ResolveAqui{% endblock %}
+
+{% block content %}
+<div class="container" style="min-height:60vh;">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="h5 mb-0">Meus Chamados</h2>
+    <a class="btn btn-primary" href="{% url 'tickets:create' %}">Abrir chamado</a>
+  </div>
+
+  <div class="row g-3">
+    {% for ticket in tickets %}
+      <div class="col-sm-6 col-lg-4">
+        <div class="card h-100 shadow-sm" style="transition:transform .18s ease;">
+          {% if ticket.photo %}
+            <img src="{{ ticket.photo.url }}" class="card-img-top" style="height:160px;object-fit:cover;" alt="{{ ticket.title }}">
+          {% else %}
+            <div class="bg-light" style="height:160px;display:flex;align-items:center;justify-content:center;">Sem foto</div>
+          {% endif %}
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{% if ticket.problem %}{{ ticket.problem.name }}{% else %}(Sem problema){% endif %}</h5>
+            <p class="text-muted small mb-1">{{ ticket.district }} • {{ ticket.created_at|date:"d/m/Y H:i" }}</p>
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+              <a href="{% url 'tickets:detail' ticket.pk %}" class="stretched-link text-decoration-none">Ver detalhes</a>
+              {% if ticket.status == 'Aberto' %}
+                 <span class="badge bg-primary p-2">{{ ticket.status }}</span>
+              {% elif ticket.status == 'Em Andamento' %}
+                <span class="badge bg-warning p-2">{{ ticket.status }}</span>
+              {% else %}
+                <span class="badge bg-success p-2">{{ ticket.status }}</span>
+              {% endif %}
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <div class="col-12">
+        <div class="card p-4 text-center">
+          <p class="mb-0 text-muted">Você ainda não criou chamados.</p>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

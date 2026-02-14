@@ -1,0 +1,56 @@
+{% extends 'core/base.html' %}
+{% block title %}Abrir Chamado — ResolveAqui{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center" style="min-height:60vh;">
+  <div class="card shadow-sm" style="max-width:820px; width:100%;">
+    <div class="card-body p-4">
+      <h2 class="h5">Abrir novo chamado</h2>
+      <p class="text-muted small">Preencha as informações e anexe uma foto (opcional).</p>
+
+      <form method="post" enctype="multipart/form-data" class="mt-3">
+        {% csrf_token %}
+        <div class="mb-3">
+          {{ form.problem.label_tag }}
+          {{ form.problem }}
+          <div class="form-text small">Selecione o problema. Se não encontrar, descreva-o no campo abaixo.</div>
+        </div>
+        <div class="mb-3">
+          {{ form.description.label_tag }}
+          {{ form.description }}
+        </div>
+        <div class="row g-2">
+          <div class="col-md-6 mb-3">
+            {{ form.district.label_tag }}
+            {{ form.district }}
+          </div>
+          <div class="col-md-6 mb-3">
+            {{ form.address.label_tag }}
+            {{ form.address }}
+          </div>
+        </div>
+
+        <div class="row g-2">
+          <div class="mb-3">
+            <label id="id_photo_label" class="form-label">{{ form.photo.label }}</label>
+                <input type="file" id="id_photo" name="photo" accept="image/*" class="form-control p-2">
+          <span class="text-muted small">Tamanho máximo: 5MB</span>
+            
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+          <button class="btn btn-primary" type="submit">Enviar chamado</button>
+          <a class="btn btn-outline-secondary" href="{% url 'tickets:my_tickets' %}">Meus chamados</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+  
+
+  
+{% endblock %}

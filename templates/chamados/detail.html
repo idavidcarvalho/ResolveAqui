@@ -1,0 +1,44 @@
+{% extends 'core/base.html' %}
+{% block title %}Detalhes do Chamado — ResolveAqui{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center" style="min-height:60vh;">
+  <div class="card shadow-sm" style="max-width:900px; width:100%;">
+    <div class="card-body p-4">
+      <div class="d-flex align-items-start mb-3">
+        <div>
+          <h3 class="h6 mb-1">{% if ticket.problem %}{{ ticket.problem.name }}{% else %}(Sem problema pré-cadastrado){% endif %}</h3>
+          <p class="text-muted small mb-0">{{ ticket.district }} • {{ ticket.created_at|date:"d/m/Y H:i" }}</p>
+        </div>
+        <div class="ms-auto">
+          {% if ticket.status == 'Aberto' %}
+                <span class="badge bg-primary p-2">{{ ticket.status }}</span>
+              {% elif ticket.status == 'Em andamento' %}
+                <span class="badge bg-warning p-2">{{ ticket.status }}</span>
+              {% elif ticket.status == 'Finalizado' %}
+                <span class="badge bg-success p-2">{{ ticket.status }}</span>
+              {% endif %}
+        </div>
+      </div>
+
+      {% if ticket.photo %}
+        <img src="{{ ticket.photo.url }}" alt="Foto" class="img-fluid rounded mb-3" style="max-height:420px;object-fit:cover;width:100%;">
+      {% endif %}
+
+      <p class="mb-3">{{ ticket.description|default:'(Sem descrição)' }}</p>
+
+      <p class="text-muted small">Endereço: {{ ticket.address }}</p>
+
+      {% if ticket.video %}
+        <div class="ratio ratio-16x9 mb-3">
+          <video controls src="{{ ticket.video.url }}"></video>
+        </div>
+      {% endif %}
+
+      <div class="d-flex justify-content-end">
+        <a class="btn btn-outline-secondary" href="{% url 'tickets:my_tickets' %}">Voltar</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
