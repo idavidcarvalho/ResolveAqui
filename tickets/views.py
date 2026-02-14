@@ -29,5 +29,40 @@ def my_tickets(request):
 
 @login_required
 def ticket_detail(request, pk):
-    ticket = get_object_or_404(Ticket, pk=pk, created_by=request.user)
-    return render(request, 'chamados/detail.html', {'ticket': ticket})
+    # Gestores podem ver qualquer ticket, usuários comuns apenas os seus
+    if request.user.typeUser == 'Gestor':
+        ticket = get_object_or_404(Ticket, pk=pk)
+    else:
+        ticket = get_object_or_404(Ticket, pk=pk, created_by=request.user)
+
+    # Importar aqui para evitar import circular
+    from comments.models import Comment
+    from comments.forms import CommentForm
+
+    # Buscar comentários do ticket
+    comments = ticket.comments.select_related('author').all()
+
+    # Processar formulário de comentário
+    comment_form = None
+    can_comment = ticket.status == 'Em andamento'
+
+    if can_comment:
+        if request.method == 'POST':
+            comment_form = CommentForm(request.POST, request.FILES)
+            if comment_form.is_valid():
+                comment = comment_form.save(commit=False)
+                comment.ticket = ticket
+                comment.author = request.user
+                comment.save()
+                messages.success(request, 'Comentário adicionado com sucesso.')
+                return redirect('tickets:detail', pk=ticket.pk)
+        else:
+            comment_form = CommentForm()
+
+    context = {
+        'ticket': ticket,
+        'comments': comments,
+        'comment_form': comment_form,
+        'can_comment': can_comment,
+    }
+    return render(request, 'chamados/detail.html', context)

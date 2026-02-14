@@ -44,6 +44,94 @@
         </div>
       {% endif %}
 
+      <!-- Seção de Comentários -->
+      <hr class="my-4">
+
+      <div class="mb-4">
+        <h6 class="text-muted small mb-3"><i class="bi bi-chat-dots me-2"></i>COMENTÁRIOS ({{ comments.count }})</h6>
+
+        {% if comments %}
+          <div class="mb-4">
+            {% for comment in comments %}
+              <div class="card mb-3 {% if comment.author == user %}border-primary{% endif %}">
+                <div class="card-body p-3">
+                  <div class="d-flex align-items-start mb-2">
+                    <div class="flex-grow-1">
+                      <strong class="d-block mb-1">
+                        {% if comment.author.profile_picture %}
+                          <img src="{{ comment.author.profile_picture.url }}" alt="{{ comment.author.firstName }}" class="rounded-circle me-2" style="width:28px;height:28px;object-fit:cover;">
+                        {% else %}
+                          <i class="bi bi-person-circle me-2"></i>
+                        {% endif %}
+                        {{ comment.author.firstName }} {{ comment.author.lastName }}
+                        {% if comment.author.typeUser == 'Gestor' %}
+                          <span class="badge bg-info text-dark ms-2" style="font-size:0.7rem;">Gestor</span>
+                        {% endif %}
+                        {% if comment.author == ticket.created_by %}
+                          <span class="badge bg-secondary ms-2" style="font-size:0.7rem;">Autor do chamado</span>
+                        {% endif %}
+                      </strong>
+                      <small class="text-muted"><i class="bi bi-clock me-1"></i>{{ comment.created_at|date:"d/m/Y H:i" }}</small>
+                    </div>
+                  </div>
+                  <p class="mb-2">{{ comment.text }}</p>
+                  {% if comment.photo %}
+                    <img src="{{ comment.photo.url }}" alt="Foto" class="img-fluid rounded mt-2" style="max-height:200px;">
+                  {% endif %}
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="alert alert-light text-center">
+            <i class="bi bi-chat-dots text-muted" style="font-size:2rem;"></i>
+            <p class="mb-0 mt-2">Nenhum comentário ainda.</p>
+          </div>
+        {% endif %}
+
+        <!-- Formulário de Novo Comentário -->
+        {% if can_comment %}
+          <div class="card border-primary">
+            <div class="card-body p-3">
+              <h6 class="mb-3"><i class="bi bi-plus-circle me-2"></i>Adicionar comentário</h6>
+              <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                  {{ comment_form.text.label_tag }}
+                  {{ comment_form.text }}
+                  {% if comment_form.text.errors %}
+                    <div class="text-danger small">{{ comment_form.text.errors.0 }}</div>
+                  {% endif %}
+                  <div class="form-text small">
+                    <i class="bi bi-info-circle me-1"></i>Máximo de 500 caracteres
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  {{ comment_form.photo.label_tag }}
+                  {{ comment_form.photo }}
+                  {% if comment_form.photo.errors %}
+                    <div class="text-danger small">{{ comment_form.photo.errors.0 }}</div>
+                  {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary"><i class="bi bi-send me-2"></i>Enviar comentário</button>
+              </form>
+            </div>
+          </div>
+        {% else %}
+          <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            {% if ticket.status == 'Aberto' %}
+              Comentários só podem ser adicionados quando o chamado estiver <strong>Em andamento</strong>.
+            {% elif ticket.status == 'Finalizado' %}
+              Este chamado foi finalizado e não aceita mais comentários.
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+
       <div class="d-flex justify-content-between align-items-center">
         <a class="btn btn-outline-secondary" href="{% url 'tickets:my_tickets' %}"><i class="bi bi-arrow-left me-2"></i>Voltar para meus chamados</a>
         <span class="text-muted small">Ticket #{{ ticket.pk }}</span>
